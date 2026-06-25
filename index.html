@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Wszystkiego najlepszego!</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, 'Georgia', serif;
+  background: linear-gradient(135deg, #fdf6f0 0%, #fce4ec 50%, #f8e8e8 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 40px 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.screen > *:not(#confetti-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== SCREEN 1 – Życzenia ===== */
+.title {
+  font-size: 2.2rem;
+  color: #c62828;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 12px rgba(198,40,40,0.15);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #8d6e63;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff;
+  border: none;
+  padding: 18px 56px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  font-family: -apple-system, 'Georgia', serif;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(198,40,40,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: 0 4px 16px rgba(198,40,40,0.25);
+}
+
+/* Dekoracje – baloniki */
+.balloons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.balloon {
+  width: 50px;
+  height: 62px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+.balloon::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 20px;
+  background: #a1887f;
+}
+
+.balloon:nth-child(1) { background: #e53935; animation-delay: 0s; }
+.balloon:nth-child(2) { background: #ffb300; animation-delay: 0.4s; }
+.balloon:nth-child(3) { background: #43a047; animation-delay: 0.8s; }
+.balloon:nth-child(4) { background: #1e88e5; animation-delay: 1.2s; }
+.balloon:nth-child(5) { background: #8e24aa; animation-delay: 1.6s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Sparkle */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ffd54f;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ffd54f;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== SCREEN 2 – Koperty ===== */
+.screen-title {
+  font-size: 2rem;
+  color: #c62828;
+  margin-bottom: 32px;
+  font-weight: 700;
+}
+
+.envelopes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.envelope {
+  aspect-ratio: 3 / 2;
+  background: linear-gradient(145deg, #fff8e1, #ffecb3);
+  border: 2px solid #ffcc02;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+.envelope::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(160deg, #ffe082, #ffecb3);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-radius: 6px 6px 0 0;
+}
+
+.envelope span {
+  position: relative;
+  z-index: 1;
+  color: #bf360c;
+  font-size: 1.5rem;
+  margin-top: 8px;
+}
+
+.envelope:active {
+  transform: scale(0.93);
+}
+
+/* ===== SCREEN 3 – Zdrapka ===== */
+.scratch-hint {
+  font-size: 0.95rem;
+  color: #8d6e63;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.scratch-card {
+  background: linear-gradient(145deg, #fff8e1, #fff);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border: 2px solid #ffcc02;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 16px;
+  position: relative;
+}
+
+.scratch-card::before {
+  content: 'ZDRApKĄ';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  font-weight: 900;
+  color: rgba(0,0,0,0.03);
+  letter-spacing: 8px;
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
+}
+
+.scratch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.scratch-cell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  text-align: center;
+  padding: 2px;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.scratch-cell .cell-content {
+  position: relative;
+  z-index: 1;
+  color: #333;
+}
+
+.scratch-cell.revealed canvas {
+  display: none;
+}
+
+/* Win reveal */
+.win-reveal {
+  margin-top: 24px;
+  animation: winPop 0.5s ease-out;
+}
+
+.win-reveal.hidden {
+  display: none;
+}
+
+.win-label {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #c62828;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.win-present {
+  width: 100px;
+  height: 100px;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(198,40,40,0.25);
+  border: 3px solid #ffd54f;
+}
+
+@keyframes winPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== SCREEN 4 – Propozycje ===== */
+.proposals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+  margin-top: 24px;
+}
+
+.proposal-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  text-align: left;
+  border-left: 4px solid #c62828;
+}
+
+.proposal-card .name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #c62828;
+  margin-bottom: 4px;
+}
+
+.proposal-card .desc {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Przycisk powrotu */
+.btn-back {
+  background: none;
+  border: 2px solid #c62828;
+  color: #c62828;
+  padding: 12px 32px;
+  font-size: 1rem;
+  border-radius: 50px;
+  font-family: -apple-system, 'Georgia', serif;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-back:active {
+  background: #c62828;
+  color: #fff;
+}
+
+.btn-hidden {
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<!-- Confetti canvas (screen 1) -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ===== SCREEN 1 – Życzenia ===== -->
+<div id="screen1" class="screen active">
+  <div class="balloons">
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+  </div>
+  <h1 class="title">Wszystkiego najlepszego<br>z okazji urodzin!</h1>
+  <p class="subtitle">Kochanie, spełnienia marzeń!<br>Przygotowałem dla Ciebie niespodziankę.</p>
+  <button class="btn-primary" onclick="goToScreen(2)">Odbierz prezent</button>
+</div>
+
+<!-- ===== SCREEN 2 – Koperty ===== -->
+<div id="screen2" class="screen">
+  <h2 class="screen-title">Wybierz kopertę</h2>
+  <div class="envelopes-grid" id="envelopes-grid"></div>
+  <button class="btn-back" onclick="goToScreen(1)">← Powrót</button>
+</div>
+
+<!-- ===== SCREEN 3 – Zdrapka ===== -->
+<div id="screen3" class="screen">
+  <h2 class="screen-title">Zdrap i odkryj prezent!</h2>
+  <p class="scratch-hint">Odkrycie trzech takich samych prezentów oznacza wygraną</p>
+  <div class="scratch-card" style="position:relative;">
+    <div class="scratch-grid" id="scratch-grid"></div>
+    
+  </div>
+  <div id="win-reveal" class="win-reveal hidden">
+    <div class="win-label">WYGRANA!</div>
+    <div class="win-present" id="win-present"></div>
+    <p class="subtitle" style="margin-top: 16px; margin-bottom: 0;">Twój prezent to:</p>
+    <button class="btn-primary" style="margin-top: 20px;" onclick="goToScreen(4)">Odbierz</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 4 – Propozycje ===== -->
+<div id="screen4" class="screen">
+  <h2 class="screen-title">Zrobiłem research!</h2>
+  <p class="subtitle" style="margin-bottom: 8px;">
+    Oto 3 sprawdzone propozycje pieca do pizzy,<br>które będą idealne na nasze potrzeby:
+  </p>
+  <div class="proposals" id="proposals-list"></div>
+  <p class="subtitle" style="margin-top: 24px;">Wybierz który wolisz i daj znać :D</p>
+</div>
+
+<script>
+// === Confetti ===
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let confettiPieces = [];
+let animId;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const colors = ['#e53935','#ffb300','#43a047','#1e88e5','#8e24aa','#ff6f00','#e91e63','#00bcd4'];
+
+class ConfettiPiece {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height - canvas.height;
+    this.w = Math.random() * 10 + 5;
+    this.h = Math.random() * 6 + 3;
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.vy = Math.random() * 2 + 1;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.rotation = Math.random() * 360;
+    this.rotSpeed = (Math.random() - 0.5) * 6;
+    this.opacity = 1;
+  }
+  update() {
+    this.y += this.vy;
+    this.x += this.vx;
+    this.rotation += this.rotSpeed;
+    if (this.y > canvas.height + 20) {
+      this.reset();
+      this.y = -20;
+    }
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation * Math.PI / 180);
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+    ctx.restore();
+  }
+}
+
+function initConfetti(count = 80) {
+  confettiPieces = [];
+  for (let i = 0; i < count; i++) {
+    const p = new ConfettiPiece();
+    p.y = Math.random() * canvas.height;
+    confettiPieces.push(p);
+  }
+}
+
+function animateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces.forEach(p => { p.update(); p.draw(); });
+  animId = requestAnimationFrame(animateConfetti);
+}
+
+let confettiRunning = false;
+function startConfetti() {
+  if (confettiRunning) return;
+  confettiRunning = true;
+  canvas.style.display = 'block';
+  initConfetti(100);
+  animateConfetti();
+}
+
+function stopConfetti() {
+  confettiRunning = false;
+  if (animId) cancelAnimationFrame(animId);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvas.style.display = 'none';
+}
+
+// === Screen navigation ===
+function goToScreen(num) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen' + num).classList.add('active');
+
+  if (num === 1) {
+    startConfetti();
+  } else {
+    stopConfetti();
+  }
+
+  if (num === 2 && document.getElementById('envelopes-grid').children.length === 0) {
+    initEnvelopes();
+  }
+}
+
+// === Envelopes ===
+function initEnvelopes() {
+  const grid = document.getElementById('envelopes-grid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 9; i++) {
+    const div = document.createElement('div');
+    div.className = 'envelope';
+    div.innerHTML = '<span>✉</span>';
+    div.onclick = () => goToScreen(3);
+    grid.appendChild(div);
+  }
+}
+
+// === Scratch cards ===
+const CELL_ITEMS = [
+  { label: 'Piec do pizzy' },
+  { label: 'Piec do pizzy' },
+  { label: 'Piec do pizzy' },
+  { label: 'Pizza w giro' },
+  { label: 'Pizza w giro' },
+  { label: 'Mąka do pizzy' },
+  { label: 'Mąka do pizzy' },
+  { label: 'Kurs pizzerstwa we Włoszech' },
+  { label: 'Pizza w Neapolu' },
+  { label: 'Pizza w Neapolu' },
+  { label: '1 zł' },
+  { label: '1 zł' },
+];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let revealCounts = {};
+let winTriggered = false;
+
+function initScratch() {
+  const grid = document.getElementById('scratch-grid');
+  grid.innerHTML = '';
+  revealCounts = {};
+  winTriggered = false;
+
+  document.getElementById('win-reveal').classList.add('hidden');
+
+  const shuffled = shuffle([...CELL_ITEMS]);
+
+  shuffled.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'scratch-cell';
+    div.dataset.index = idx;
+    div.dataset.content = item.label;
+    // Dodajemy canvas do każdej komórki
+    const cellCanvas = document.createElement('canvas');
+    cellCanvas.width = 100;
+    cellCanvas.height = 100;
+    cellCanvas.style.position = 'absolute';
+    cellCanvas.style.top = '0';
+    cellCanvas.style.left = '0';
+    cellCanvas.style.width = '100%';
+    cellCanvas.style.height = '100%';
+    cellCanvas.style.zIndex = '2';
+    cellCanvas.style.touchAction = 'none';
+    // Pokryj "farbą" (gradient jak metaliczna zdrapka)
+    const ctx = cellCanvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 100, 100);
+    grad.addColorStop(0, '#d4d4d4');
+    grad.addColorStop(0.2, '#b8b8b8');
+    grad.addColorStop(0.4, '#e0e0e0');
+    grad.addColorStop(0.55, '#a8a8a8');
+    grad.addColorStop(0.7, '#cccccc');
+    grad.addColorStop(0.85, '#b0b0b0');
+    grad.addColorStop(1, '#d8d8d8');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 100, 100);
+    // highlight w górnej części
+    const hl = ctx.createLinearGradient(0, 0, 0, 100);
+    hl.addColorStop(0, 'rgba(255,255,255,0.3)');
+    hl.addColorStop(0.4, 'transparent');
+    ctx.fillStyle = hl;
+    ctx.fillRect(0, 0, 100, 100);
+    // cienie na krawędziach
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0, 0, 100, 2);
+    ctx.fillRect(0, 98, 100, 2);
+    ctx.fillRect(0, 0, 2, 100);
+    ctx.fillRect(98, 0, 2, 100);
+    ctx.globalCompositeOperation = 'destination-out';
+    let isScratching = false;
+    let lastPoint = null;
+    function getPos(e) {
+      const rect = cellCanvas.getBoundingClientRect();
+      let x, y;
+      if (e.touches) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
+      // Przelicz na rozmiar canvasu
+      x = x * (cellCanvas.width / rect.width);
+      y = y * (cellCanvas.height / rect.height);
+      return { x, y };
+    }
+    function scratchStart(e) {
+      isScratching = true;
+      lastPoint = getPos(e);
+      scratchMove(e);
+      e.preventDefault();
+    }
+    function scratchMove(e) {
+      if (!isScratching) return;
+      const p = getPos(e);
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 28;
+      ctx.beginPath();
+      ctx.moveTo(lastPoint.x, lastPoint.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      lastPoint = p;
+      e.preventDefault();
+      checkProgress();
+    }
+    function scratchEnd() {
+      isScratching = false;
+    }
+    function checkProgress() {
+      const img = ctx.getImageData(0, 0, cellCanvas.width, cellCanvas.height);
+      let cleared = 0;
+      for (let i = 0; i < img.data.length; i += 4) {
+        if (img.data[i + 3] < 32) cleared++;
+      }
+      const percent = cleared / (img.data.length / 4);
+      if (percent > 0.55 && !div.classList.contains('revealed')) {
+        div.classList.add('revealed');
+        cellCanvas.style.display = 'none';
+        const content = div.dataset.content;
+        revealCounts[content] = (revealCounts[content] || 0) + 1;
+        if (revealCounts[content] === 3 && !winTriggered) {
+          winTriggered = true;
+          setTimeout(() => showWin(content), 400);
+        }
+      }
+    }
+    cellCanvas.addEventListener('mousedown', scratchStart);
+    cellCanvas.addEventListener('mousemove', scratchMove);
+    window.addEventListener('mouseup', scratchEnd);
+    cellCanvas.addEventListener('touchstart', scratchStart, {passive:false});
+    cellCanvas.addEventListener('touchmove', scratchMove, {passive:false});
+    window.addEventListener('touchend', scratchEnd);
+    div.appendChild(cellCanvas);
+    const span = document.createElement('span');
+    span.className = 'cell-content';
+    span.textContent = item.label;
+    div.appendChild(span);
+    grid.appendChild(div);
+  });
+
+}
+
+
+function showWin(content) {
+  const reveal = document.getElementById('win-reveal');
+  const present = document.getElementById('win-present');
+  present.textContent = content;
+  reveal.classList.remove('hidden');
+  startConfetti();
+}
+
+// === Proposals ===
+function initProposals() {
+  const list = document.getElementById('proposals-list');
+  if (list.children.length > 0) return;
+
+  const items = [
+    { name: 'Propozycja 1', desc: 'Opis – uzupełnię wkrótce' },
+    { name: 'Propozycja 2', desc: 'Opis – uzupełnię wkrótce' },
+    { name: 'Propozycja 3', desc: 'Opis – uzupełnię wkrótce' },
+  ];
+
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'proposal-card';
+    card.innerHTML = `<div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
+    list.appendChild(card);
+  });
+}
+
+// Hook into screen activation
+const origGo = goToScreen;
+goToScreen = function(num) {
+  origGo(num);
+  if (num === 3) {
+    initScratch();
+  }
+  if (num === 4) {
+    initProposals();
+    startConfetti();
+  }
+};
+
+// Start confetti on load
+window.addEventListener('load', () => {
+  startConfetti();
+});
+</script>
+</body>
+</html>
